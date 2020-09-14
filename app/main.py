@@ -1,17 +1,23 @@
 from flask import Flask
+from settings import app_config, app_active
 
-from flask_migrate import Migrate, MigrateCommand
 from flask_sqlalchemy import SQLAlchemy
-from flask_script import Manager
 
-app = Flask(__name__)
-app.config.from_object('settings')
+from .routes.livro import bp as bp_livro
 
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-
-manager = Manager(app)
-manager.add_command('db', MigrateCommand)
+config = app_config[app_active]
 
 
-from app.models import tables
+def create_app(config_name):
+    app = Flask(__name__)
+
+    app.config.from_object(app_config[app_active])
+    app.config.from_pyfile('../settings.py')
+    app.config['SQLALCHEMY_DATABASE_URI'] = config.SQLALCHEMY_DATABASE_URI
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    db = SQLAlchemy(app)
+    db.init_app(app)
+
+    app.register_blueprint(bp_livro)
+
+    return app
