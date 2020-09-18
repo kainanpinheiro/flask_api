@@ -2,7 +2,9 @@ from flask import Flask
 
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy, event
+
+from datetime import datetime
 
 from settings import app_config, app_active
 
@@ -22,20 +24,38 @@ else:
     db = SQLAlchemy(config.APP)
 
 
-item_venda = db.Table(
-    "item_venda",
-    db.Column("livro_id", db.Integer, db.ForeignKey("livro.id"), primary_key=True),
-    db.Column("venda_id", db.Integer, db.ForeignKey("venda.id"), primary_key=True),
-    db.Column("quantidade", db.Integer, nullable=False),
-    db.Column("preco_item", db.Float, nullable=False),
-)
+class Item_Venda(db.Model):
+    __table__name = "item_venda"
+
+    id = db.Column(db.Integer, primary_key=True)
+    livro_id = db.Column(db.Integer, db.ForeignKey("livro.id"), nullable=False)
+    venda_id = db.Column(db.Integer, db.ForeignKey("venda.id"), nullable=False)
+    quantidade = db.Column(db.Integer, nullable=False)
+    preco_item = db.Column(db.Float, nullable=False)
+
+    livro = db.relationship("Livro", backref="item_venda")
+    venda = db.relationship("Venda", backref="item_venda")
+
+    @event.listens_for(db.session, "before_flush")
+    def reduzir_estoque(*args):
+        objetos = args[0]
+
+        for objeto in objetos.new:
+            if not isinstance(objeto, Item_Venda):
+                continue
+
+            livro = Livro.query.filter_by(id=objeto.livro_id).first()
+
+            livro.estoque -= objeto.quantidade
+
+            db.session.add(livro)
 
 
 class Livro(db.Model):
     __tablename__ = "livro"
 
     id = db.Column(db.Integer, primary_key=True)
-    titulo = db.Column(db.String(100), unique=True, nullable=False)
+    titulo = db.Column(db.String(100), nullable=False)
     autor = db.Column(db.String(100), nullable=False)
     editora = db.Column(db.String(100), nullable=False)
     isbn = db.Column(db.String(25), nullable=False)
@@ -43,12 +63,6 @@ class Livro(db.Model):
     preco = db.Column(db.Float, nullable=False)
     estoque = db.Column(db.Integer, nullable=False)
     foto = db.Column(db.String(100), nullable=False)
-
-    items_venda = db.relationship(
-        "Venda",
-        secondary=item_venda,
-        backref=db.backref("items_da_venda", lazy="dynamic"),
-    )
 
     def to_dict(livro):
         livro_dic = {}
@@ -71,8 +85,17 @@ class Venda(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     desconto = db.Column(db.Float, nullable=False)
-    total = db.Column(db.Integer, nullable=False)
-    data = db.Column(db.DateTime, default=db.func.current_timestamp(), nullable=False)
+    data = db.Column(db.DateTime, default=datetime.now(), nullable=False)
+
+    def to_dict(venda):
+        venda_dict = {}
+        venda_dict = {
+            "id": venda.id,
+            "desconto": venda.desconto,
+            "data": venda.data
+        }
+
+        return venda_dict
 
 
 if __name__ == "__main__":
