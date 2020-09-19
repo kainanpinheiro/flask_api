@@ -5,7 +5,7 @@ bp = Blueprint("livro", __name__)
 
 
 @bp.route("/livro", methods=["GET"])
-def todos_livros():
+def listar_livros():
     total_livros = []
     livros = Livro.query.all()
 
@@ -16,7 +16,7 @@ def todos_livros():
 
 
 @bp.route("/livro/<int:livro_id>", methods=["GET"])
-def um_livro(livro_id):
+def listar_um_livro(livro_id):
     try:
         livro = Livro.query.filter_by(id=livro_id).first()
 

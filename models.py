@@ -46,9 +46,11 @@ class Item_Venda(db.Model):
 
             livro = Livro.query.filter_by(id=objeto.livro_id).first()
 
-            livro.estoque -= objeto.quantidade
-
-            db.session.add(livro)
+            if livro.estoque >= objeto.quantidade:
+                livro.estoque -= objeto.quantidade
+                db.session.add(livro)
+            else:
+                db.session.close()
 
 
 class Livro(db.Model):
@@ -67,6 +69,7 @@ class Livro(db.Model):
     def to_dict(livro):
         livro_dic = {}
         livro_dic = {
+            "id": livro.id,
             "titulo": livro.titulo,
             "autor": livro.autor,
             "editora": livro.editora,
@@ -87,15 +90,22 @@ class Venda(db.Model):
     desconto = db.Column(db.Float, nullable=False)
     data = db.Column(db.DateTime, default=datetime.now(), nullable=False)
 
-    def to_dict(venda):
-        venda_dict = {}
-        venda_dict = {
-            "id": venda.id,
-            "desconto": venda.desconto,
-            "data": venda.data
-        }
+    def total():
+        vendas = Venda.query.all()
+        vendas_totais = []
 
-        return venda_dict
+        for venda in vendas:
+            for item in venda.item_venda:
+                dic_venda = {
+                    "id": venda.id,
+                    "data": venda.data,
+                    "livro": item.livro.titulo,
+                    "quantidade": item.quantidade,
+                    "preco_item": item.preco_item,
+                    "desconto": venda.desconto
+                }
+                vendas_totais.append(dic_venda)
+        return vendas_totais
 
 
 if __name__ == "__main__":
