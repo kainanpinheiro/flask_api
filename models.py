@@ -24,7 +24,7 @@ else:
     db = SQLAlchemy(config.APP)
 
 
-class Item_Venda(db.Model):
+class ItemVenda(db.Model):
     __table__name = "item_venda"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -41,7 +41,7 @@ class Item_Venda(db.Model):
         objetos = args[0]
 
         for objeto in objetos.new:
-            if not isinstance(objeto, Item_Venda):
+            if not isinstance(objeto, ItemVenda):
                 continue
 
             livro = Livro.query.filter_by(id=objeto.livro_id).first()
@@ -51,6 +51,25 @@ class Item_Venda(db.Model):
                 db.session.add(livro)
             else:
                 db.session.close()
+
+
+class Pagamento(db.Model):
+    __tablename__ = "pagamento"
+
+    id = db.Column(db.Integer, primary_key=True)
+    venda_id = db.Column(db.Integer, db.ForeignKey('venda.id'), nullable=False)
+    tipo_pagamento_id = db.Column(db.Integer, db.ForeignKey('tipo_pagamento.id'), nullable=False)
+    valor = db.Column(db.Float, nullable=False)
+
+    venda = db.relationship("Venda", backref="pagamento")
+    tipo_pagamento = db.relationship("TipoPagamento", backref="pagamento")
+
+
+class TipoPagamento(db.Model):
+    __tablename__ = "tipo_pagamento"
+
+    id = db.Column(db.Integer, primary_key=True)
+    descricao = db.Column(db.String(50), nullable=False)
 
 
 class Livro(db.Model):

@@ -21,7 +21,7 @@ def listar_um_livro(livro_id):
         livro = Livro.query.filter_by(id=livro_id).first()
 
         if livro is None:
-            return jsonify("Livro não existe!")
+            return jsonify(error="Livro não existe!")
 
         return jsonify(Livro.to_dict(livro))
     except Exception as e:
@@ -42,7 +42,7 @@ def inserir_novo_livro():
 
     except Exception as e:
         print(e)
-        return jsonify("Erro ao tentar inserir o livro"), 404
+        return jsonify(error="Erro ao tentar inserir o livro"), 404
 
 
 @bp.route('/livro/<int:livro_id>', methods=["PUT"])
@@ -64,7 +64,7 @@ def alterar_livro(livro_id):
         return jsonify(Livro.to_dict(livro)), 200
     except Exception as e:
         print(e)
-        return jsonify("Erro ao tentar alterar o livro"), 404
+        return jsonify(error="Erro ao tentar alterar o livro"), 404
 
 
 @bp.route('/livro/<int:livro_id>', methods=['DELETE'])
@@ -78,4 +78,4 @@ def deletar_livro(livro_id):
         return jsonify(), 200
     except Exception as e:
         print(e)
-        return jsonify("Erro ao tentar deletar o livro"), 404
+        return jsonify(error="Erro ao tentar deletar o livro"), 404
