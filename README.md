@@ -17,6 +17,7 @@ $ cd flask_api
 
 # Criando uma imagem do Postgres com o docker
 $ docker run --name database -e POSTGRES_PASSWORD=mysecretpassword -p 5432:5432 -d postgres
+
 # Crie um arquivo .env copiando o conteúdo do .env.example e adicione as configurações do seu banco de dados :)
 
 # Crie uma virtualenv
