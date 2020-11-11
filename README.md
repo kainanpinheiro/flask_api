@@ -9,20 +9,24 @@ Além disto é bom ter um editor para trabalhar com o código como [VSCode](http
 ### 🎲 Rodando o Back End (servidor)
 
 ```bash
-# Criando uma imagem do Postgres com o docker
-$ docker run --name database -e POSTGRES_PASSWORD=mysecretpassword -p 5432:5432 -d postgres
-
 # Clone este repositório
 $ git clone <https://github.com/kainanpinheiro/flask_api>
 
 # Acesse a pasta do projeto no terminal/cmd
 $ cd flask_api
 
+# Criando uma imagem do Postgres com o docker
+$ docker run --name database -e POSTGRES_PASSWORD=mysecretpassword -p 5432:5432 -d postgres
+# Crie um arquivo .env copiando o conteúdo do .env.example e adicione as configurações do seu banco de dados :)
+
 # Crie uma virtualenv
 $ virtualenv venv
 
 # Instale as dependências
 $ pip install -r requirements.txt
+
+# Rode as migrations
+$ python models.py db upgrade
 
 # Execute a aplicação em modo de desenvolvimento
 $ python run.py
