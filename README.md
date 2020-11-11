@@ -23,6 +23,9 @@ $ docker run --name database -e POSTGRES_PASSWORD=mysecretpassword -p 5432:5432 
 # Crie uma virtualenv
 $ virtualenv venv
 
+# Ative a virtualenv
+$ source venv/scripts/activate
+
 # Instale as dependências
 $ pip install -r requirements.txt
 
