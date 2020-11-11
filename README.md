@@ -42,10 +42,6 @@ $ python run.py
 
 ---
 
- <img style="border-radius: 50%;" src="https://avatars1.githubusercontent.com/u/53863777?s=460&u=2f05d7875f69ee07d7af1cc2820914b77a1fcb35&v=4" width="100px;" alt=""/>
- <br />
- <sub><b>Kainan Pinheiro</b></sub>
-
 Feito com ❤️ por Kainan Pinheiro!
 
-[![Linkedin Badge](https://img.shields.io/badge/-Thiago-blue?style=flat-square&logo=Linkedin&logoColor=white&link=https://www.linkedin.com/in/tgmarinho/)](https://www.linkedin.com/in/kainan-pinheiro-94b212181/)
+[![Linkedin Badge](https://img.shields.io/badge/-Thiago-blue?style=flat-square&logo=Linkedin&logoColor=white&link=https://www.linkedin.com/in/kainan-pinheiro-94b212181/)](https://www.linkedin.com/in/kainan-pinheiro-94b212181/)
