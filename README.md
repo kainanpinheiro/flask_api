@@ -29,7 +29,7 @@ $ pip install -r requirements.txt
 # Rode as migrations
 $ python models.py db upgrade
 
-# Execute a aplicação em modo de desenvolvimento
+# Execute a aplicação
 $ python run.py
 
 # O servidor inciará na porta:5000 - acesse <http://localhost:5000>
