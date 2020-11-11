@@ -7,35 +7,13 @@ bp = Blueprint("vendas", __name__)
 @bp.route("/venda", methods=["GET"])
 def listar_vendas():
     vendas_totais = Venda.total()
-    vendas_id = []
-    vendas_filtradas = []
+    return jsonify(vendas_totais)
 
-    for venda_total in vendas_totais:
-        dic_venda_filtrada = {
-                "id": venda_total["id"],
-                "data_venda": venda_total["data"].strftime("%Y-%m-%d %H:%M:%S"),
-                "total": venda_total["preco_item"] * venda_total["quantidade"],
-                "produtos": [{
-                    "livro": venda_total["livro"],
-                    "quantidade": venda_total["quantidade"],
-                    "preco_item": venda_total["preco_item"]
-                }]
-            }
-        if dic_venda_filtrada["id"] in vendas_id:
-            for venda in vendas_filtradas:
-                if dic_venda_filtrada["id"] == venda["id"]:
-                    venda["total"] += venda_total["preco_item"] * venda_total["quantidade"]
-                    dic_produto = {
-                        "livro": venda_total["livro"],
-                        "quantidade": venda_total["quantidade"],
-                        "preco_item": venda_total["preco_item"]
-                    }
-                    venda["produtos"].append(dic_produto)
-        else:
-            vendas_id.append(dic_venda_filtrada["id"])
-            vendas_filtradas.append(dic_venda_filtrada)
 
-    return jsonify(data=vendas_filtradas)
+@bp.route("/venda/<int:id>", methods=["GET"])
+def uma_venda(id):
+    venda = Venda.uma_venda(id)
+    return jsonify(venda)
 
 
 @bp.route("/venda", methods=["POST"])
@@ -45,7 +23,7 @@ def inserir_venda():
 
         desconto = dados_vendas["desconto"]
         produtos = dados_vendas["produtos"]
-        tipo_pagamento = dados_vendas["tipo_pagamento"]
+        id_pagamento = dados_vendas["id_pagamento"]
         valor_total = dados_vendas["valor_total"]
 
         venda = Venda()
@@ -55,7 +33,7 @@ def inserir_venda():
         db.session.flush()
 
         pagamento = Pagamento()
-        tipo_pagamento = TipoPagamento.query.filter_by(descricao=tipo_pagamento).first()
+        tipo_pagamento = TipoPagamento.query.filter_by(id=id_pagamento).first()
 
         pagamento.venda_id = venda.id
         pagamento.valor = valor_total
@@ -77,6 +55,7 @@ def inserir_venda():
                 return jsonify(error="Algum livro está fora de estoque!")
 
         db.session.commit()
+        db.session.close()
 
         return jsonify(msg="Venda concluida com sucesso"), 201
     except Exception as e:

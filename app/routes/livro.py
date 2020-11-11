@@ -4,15 +4,16 @@ from models import Livro, db
 bp = Blueprint("livro", __name__)
 
 
-@bp.route("/livro", methods=["GET"])
+@bp.route("/livros", methods=["GET"])
 def listar_livros():
     total_livros = []
-    livros = Livro.query.all()
+    livros = Livro.query.order_by(Livro.estoque.desc())
 
     for livro in livros:
         total_livros.append(Livro.to_dict(livro))
+    db.session.close()
 
-    return jsonify(data=total_livros)
+    return jsonify(total_livros)
 
 
 @bp.route("/livro/<int:livro_id>", methods=["GET"])
@@ -24,6 +25,7 @@ def listar_um_livro(livro_id):
             return jsonify(error="Livro não existe!")
 
         return jsonify(Livro.to_dict(livro))
+        db.session.close()
     except Exception as e:
         print(e)
         return jsonify("Error"), 404
@@ -60,6 +62,7 @@ def alterar_livro(livro_id):
         livro.foto = request.json.get('foto')
 
         db.session.commit()
+        db.session.close()
 
         return jsonify(Livro.to_dict(livro)), 200
     except Exception as e:
@@ -74,6 +77,7 @@ def deletar_livro(livro_id):
 
         db.session.delete(livro)
         db.session.commit()
+        db.session.close()
 
         return jsonify(), 200
     except Exception as e:

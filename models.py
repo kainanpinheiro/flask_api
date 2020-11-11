@@ -25,7 +25,7 @@ else:
 
 
 class ItemVenda(db.Model):
-    __table__name = "item_venda"
+    __tablename__ = "item_venda"
 
     id = db.Column(db.Integer, primary_key=True)
     livro_id = db.Column(db.Integer, db.ForeignKey("livro.id"), nullable=False)
@@ -110,21 +110,36 @@ class Venda(db.Model):
     data = db.Column(db.DateTime, default=datetime.now(), nullable=False)
 
     def total():
-        vendas = Venda.query.all()
+        vendas = Venda.query.order_by(Venda.data.desc()).all()
         vendas_totais = []
 
         for venda in vendas:
-            for item in venda.item_venda:
-                dic_venda = {
-                    "id": venda.id,
-                    "data": venda.data,
+            venda_uma = Venda.uma_venda(venda.id)
+            vendas_totais.append(venda_uma)
+        db.session.close()
+        return vendas_totais
+
+    def uma_venda(venda_id):
+        venda = Venda.query.filter_by(id=venda_id).first()
+        dic_venda = {
+                "id": venda.id,
+                "data": venda.data.strftime("%Y-%m-%d %H:%M:%S"),
+                "desconto": venda.desconto,
+                "produtos": [],
+                "total": 0
+                }
+        for item in venda.item_venda:
+            produtos = {
                     "livro": item.livro.titulo,
                     "quantidade": item.quantidade,
-                    "preco_item": item.preco_item,
-                    "desconto": venda.desconto
+                    "preco_item": item.preco_item
                 }
-                vendas_totais.append(dic_venda)
-        return vendas_totais
+            dic_venda["total"] += produtos["preco_item"] * produtos["quantidade"]
+            dic_venda["produtos"].append(produtos)
+        for paga in venda.pagamento:
+            dic_venda["tipo_pagamento"] = paga.tipo_pagamento.descricao
+        db.session.close()
+        return dic_venda
 
 
 if __name__ == "__main__":
