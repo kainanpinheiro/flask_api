@@ -44,4 +44,4 @@ $ python run.py
 
 Feito com ❤️ por Kainan Pinheiro!
 
-[![Linkedin Badge](https://img.shields.io/badge/-Kainan-blue?style=flat-square&logo=Linkedin&logoColor=white&link=https://www.linkedin.com/in/kainan-pinheiro-94b212181/)](https://www.linkedin.com/in/kainan-pinheiro-94b212181/)
+[![Linkedin Badge](https://img.shields.io/badge/-Kainan Pinheiro-blue?style=flat-square&logo=Linkedin&logoColor=white&link=https://www.linkedin.com/in/kainan-pinheiro-94b212181/)](https://www.linkedin.com/in/kainan-pinheiro-94b212181/)
