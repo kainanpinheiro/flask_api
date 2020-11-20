@@ -4,10 +4,10 @@ import os
 
 load_dotenv()
 
-DB_HOST = os.getenv("DB_HOST")
-DB_USER = os.getenv("DB_USER")
-DB_PW = os.getenv("DB_PW")
-DB_DB = os.getenv("DB_DB")
+DB_HOST = os.environ.get("DB_HOST")
+DB_USER = os.environ.get("DB_USER")
+DB_PW = os.environ.get("DB_PW")
+DB_DB = os.environ.get("DB_DB")
 
 
 class Config(object):
