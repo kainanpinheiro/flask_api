@@ -83,7 +83,7 @@ class Livro(db.Model):
     categoria = db.Column(db.String(30), nullable=False)
     preco = db.Column(db.Float, nullable=False)
     estoque = db.Column(db.Integer, nullable=False)
-    foto = db.Column(db.String(100), nullable=False)
+    foto = db.Column(db.String(255), nullable=False)
 
     def to_dict(livro):
         livro_dic = {}
@@ -126,7 +126,7 @@ class Venda(db.Model):
                 "data": venda.data.strftime("%Y-%m-%d %H:%M:%S"),
                 "desconto": venda.desconto,
                 "produtos": [],
-                "total": 0
+                "total": -venda.desconto
                 }
         for item in venda.item_venda:
             produtos = {

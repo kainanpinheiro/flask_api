@@ -62,7 +62,6 @@ def alterar_livro(livro_id):
         livro.foto = request.json.get('foto')
 
         db.session.commit()
-        db.session.close()
 
         return jsonify(Livro.to_dict(livro)), 200
     except Exception as e:
